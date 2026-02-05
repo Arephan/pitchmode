@@ -1,21 +1,35 @@
-# Deploy to Vercel + Supabase
+# Deploy to Vercel (Shared Supabase)
 
-## 1. Create Free Supabase Account
-- Go to https://supabase.com
-- Create a free project
-- Copy API keys
+## 1. ONE-TIME SETUP: Create Supabase Project
 
-## 2. Deploy to Vercel
+Go to https://supabase.com → Create free project
+
+Then run this SQL in Supabase SQL Editor:
+```sql
+-- Copy all SQL from unified-schema.sql in the repo
+```
+
+## 2. Deploy ALL Apps to Vercel
+
+For EACH app:
 ```bash
 vercel --prod
 ```
 
-Or via https://vercel.com/new?repo=Arephan/pitchmode
+Or click: https://vercel.com/new?repo=Arephan/[app-name]
 
-## 3. Add Environment Variables
-In Vercel dashboard, set:
-- `SUPABASE_URL` = your Supabase URL
-- `SUPABASE_KEY` = your Supabase anon key
+## 3. Add SHARED Environment Variables
 
-## 4. Done!
-Your app is live and ready to use! 🚀
+In Vercel dashboard for EACH app, set:
+```
+SUPABASE_URL = https://xxxx.supabase.co (same for all!)
+SUPABASE_KEY = eyJhbGc... (same for all!)
+```
+
+## Why This Works:
+- All 8 apps share ONE Supabase database
+- Each app uses its own table (recipes, videos, posts, etc)
+- Cost: $0 forever ✅
+- 500MB database shared across all apps
+
+That's it! All 8 apps now use the same backend.
