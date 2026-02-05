@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PitchMode - AI Pitch Coach for Founders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        .card-input {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 250px;
+            transition: border-color 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            margin-top: 20px;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e0e0e0;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #c33;
+        }
+        
+        .results {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .score-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .score-box h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        
+        .score-number {
+            font-size: 3em;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .score-bar {
+            background: rgba(255,255,255,0.3);
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        
+        .score-fill {
+            background: white;
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease-out;
+        }
+        
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .mini-score {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .mini-score h4 {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+        
+        .mini-number {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .section {
+            margin-top: 20px;
+        }
+        
+        .section h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+        
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tag {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .improvement {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-top: 12px;
+        }
+        
+        .improvement h4 {
+            color: #667eea;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+        
+        .improvement-item {
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .improvement-item strong {
+            color: #333;
+        }
+        
+        .key-takeaway {
+            background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .scores-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎤 PitchMode</h1>
+            <p>AI-powered pitch feedback for technical founders</p>
+        </header>
+        
+        <div class="main-grid">
+            <div class="card card-input">
+                <h2>Your Pitch</h2>
+                <textarea id="pitchInput" placeholder="Paste your pitch here. Tell us about your startup, what problem you solve, and why it matters..."></textarea>
+                <button id="analyzeBtn" onclick="analyzePitch()">Analyze My Pitch</button>
+                <div id="loading" class="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Claude is analyzing your pitch...</p>
+                </div>
+                <div id="error" class="error" style="display: none;"></div>
+            </div>
+            
+            <div class="card" id="resultsCard" style="display: none;">
+                <h2>Analysis Results</h2>
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        async function analyzePitch() {
+            const pitch = document.getElementById('pitchInput').value;
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const resultsCard = document.getElementById('resultsCard');
+            
+            if (!pitch.trim()) {
+                error.style.display = 'block';
+                error.textContent = 'Please enter your pitch';
+                return;
+            }
+            
+            analyzeBtn.disabled = true;
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pitch })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to analyze pitch');
+                }
+                
+                const analysis = await response.json();
+                displayResults(analysis);
+                resultsCard.style.display = 'block';
+            } catch (err) {
+                error.style.display = 'block';
+                error.textContent = err.message;
+            } finally {
+                analyzeBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayResults(analysis) {
+            const resultsDiv = document.getElementById('results');
+            
+            let html = `
+                <div class="score-box">
+                    <h3>Overall Pitch Score</h3>
+                    <p class="score-number">${analysis.overall_score}</p>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: ${analysis.overall_score}%"></div>
+                    </div>
+                </div>
+                
+                <div class="scores-grid">
+                    <div class="mini-score">
+                        <h4>Clarity</h4>
+                        <div class="mini-number">${analysis.clarity_score}</div>
+                    </div>
+                    <div class="mini-score">
+                        <h4>Traction</h4>
+                        <div class="mini-number">${analysis.traction_score}</div>
+                    </div>
+                    <div class="mini-score">
+                        <h4>Funding Ready</h4>
+                        <div class="mini-number">${analysis.funding_readiness}</div>
+                    </div>
+                </div>
+            `;
+            
+            if (analysis.strengths && analysis.strengths.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3>💪 Strengths</h3>
+                        <div class="tags">
+                            ${analysis.strengths.map(s => `<span class="tag">${s}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (analysis.weaknesses && analysis.weaknesses.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3>⚠️ Areas for Improvement</h3>
+                        <div class="tags">
+                            ${analysis.weaknesses.map(w => `<span class="tag" style="background: #ffebee; color: #c62828;">${w}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (analysis.improvements && analysis.improvements.length > 0) {
+                html += `
+                    <div class="section">
+                        <h3>📝 Specific Improvements</h3>
+                `;
+                analysis.improvements.forEach(imp => {
+                    html += `
+                        <div class="improvement">
+                            <h4>${imp.area}</h4>
+                            <div class="improvement-item">
+                                <strong>Current:</strong> ${imp.current}
+                            </div>
+                            <div class="improvement-item">
+                                <strong>Suggestion:</strong> ${imp.suggestion}
+                            </div>
+                            <div class="improvement-item">
+                                <strong>Example:</strong> ${imp.example}
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            if (analysis.key_takeaway) {
+                html += `<div class="key-takeaway">✨ ${analysis.key_takeaway}</div>`;
+            }
+            
+            resultsDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
