@@ -1,0 +1,169 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎤 PitchMode - Interactive Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #0066ff;
+            --accent: #ff4444;
+            --bg: #0a0e27;
+            --card: #1a1f3a;
+            --text: #ffffff;
+            --text-secondary: #a0a0c0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #1a1f3a 100%);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        .demo-section {
+            background: var(--card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .demo-section h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+        .demo-btn {
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .demo-btn:hover {
+            transform: translateY(-2px);
+        }
+        .demo-btn.secondary {
+            background: rgba(0, 102, 255, 0.2);
+            border: 1px solid var(--primary);
+        }
+        .features {
+            background: rgba(0, 102, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .features h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        .features ul {
+            list-style: none;
+            color: var(--text-secondary);
+        }
+        .features li:before {
+            content: "⚡ ";
+            margin-right: 0.5rem;
+        }
+        .features li {
+            margin-bottom: 0.5rem;
+        }
+        .cta {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 102, 255, 0.1);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+        }
+        .cta a {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        .cta a:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>🎤 PitchMode</h1>
+            <p>AI pitch coach for founders. Get feedback across 10+ dimensions.</p>
+        </div>
+
+        
+      <div class="demo-section">
+        <h2>🎯 Analyze Your Pitch</h2>
+        <textarea placeholder="Paste your pitch text here..." style="width: 100%; height: 120px; padding: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(0,102,255,0.3); border-radius: 6px; color: white; resize: none; margin-bottom: 1rem;"></textarea>
+        <button class="demo-btn">🤖 Analyze with AI</button>
+        
+        <div style="margin-top: 2rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px; display: none;" id="pitchResults">
+          <h3 style="color: #0066ff; margin-bottom: 1rem;">📊 Analysis Results</h3>
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: rgba(74,222,128,0.1); padding: 1rem; border-radius: 6px; border: 1px solid #4ade80;">
+              <div style="color: #4ade80; font-size: 2rem; font-weight: 700;">82/100</div>
+              <div style="color: #a0a0c0; font-size: 0.9rem;">Overall Score</div>
+            </div>
+            <div style="background: rgba(251,191,36,0.1); padding: 1rem; border-radius: 6px; border: 1px solid #fbbf24;">
+              <div style="color: #fbbf24; font-size: 2rem; font-weight: 700;">75/100</div>
+              <div style="color: #a0a0c0; font-size: 0.9rem;">Clarity Score</div>
+            </div>
+          </div>
+          <div style="color: #a0a0c0; font-size: 0.9rem;">
+            <p><strong style="color: white;">Strengths:</strong> Strong market opportunity, clear value prop</p>
+            <p><strong style="color: white;">Areas to improve:</strong> Add specific traction metrics, strengthen team background</p>
+          </div>
+        </div>
+      </div>
+      <script>
+        document.querySelector('.demo-btn').onclick = function() {
+          document.getElementById('pitchResults').style.display = 'block';
+        };
+      </script>
+    
+
+        <div class="features">
+            <h3>✨ Features</h3>
+            <ul>
+                <li>Overall score (0-100)</li><li>Clarity, traction, funding readiness</li><li>Actionable feedback with examples</li><li>Beautiful results display</li>
+            </ul>
+        </div>
+
+        <div class="cta">
+            <h3 style="margin-bottom: 1rem;">🚀 Ready to Use?</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Clone from GitHub and deploy in seconds</p>
+            <a href="https://github.com/Arephan" target="_blank">View on GitHub</a>
+        </div>
+    </div>
+</body>
+</html>
